@@ -1,14 +1,35 @@
 {% extends "base.html"%}
 
 {% block body%} 
-<form action="/register" method="post">
-    <input autocomplete="off" autofocus name="name" placeholder="Name" required type="text">
-    <select name="sport">
-        <option disabled selected>Sport</option>
-        {% for sport in sports%}
-            <option value="{{ sport}}">{{sport}}</option>"
-        {% endfor %}
-    </select>
-    <button type="submit">Register</button>
-</form>
+
+{% if session["name"]%}
+    You a logged in as {{session["name"]}}. <a href="/logout">Logout</a>
+    <form action="/register" method="post">
+        <input autocomplete="off" autofocus name="name" placeholder="Name" required type="text">
+        <select name="sport">
+            <option disabled selected>Sport</option>
+            {% for sport in sports%}
+                <option value="{{ sport}}">{{sport}}</option>"
+            {% endfor %}
+        </select>
+        <button type="submit">Register</button>
+    </form>
+{% else %}
+    <p>You a not logged in. <a href="/login">Login</a></p>
+    <h1>Yeah?</h1>
+
+
+    <form action="/register" method="post">
+        <input autocomplete="off" autofocus name="name" placeholder="Name" required type="text">
+        <select name="sport">
+            <option disabled selected>Sport</option>
+            {% for sport in sports%}
+                <option value="{{ sport}}">{{sport}}</option>"
+            {% endfor %}
+        </select>
+        <button type="submit">Register</button>
+    </form>
+{% endif %} 
+
+
 {% endblock %}

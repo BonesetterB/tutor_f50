@@ -1,9 +1,15 @@
-from flask import Blueprint, render_template, redirect, url_for,Flask,request
-from database import session
+from flask import Blueprint, render_template, redirect, url_for,Flask,request, session
+from database import session as db
 from model import User
 from sqlalchemy.future import select
+from flask_session import Session
 
 app = Flask(__name__)
+
+app.config["SESSION_PERMANENT"]= False
+app.config["SESSION_TYPE"]= "filesystem"
+Session(app)
+
 
 registration = {}
 SPORTS=["Fotball", "socer","Basket"]
@@ -12,7 +18,22 @@ SPORTS=["Fotball", "socer","Basket"]
 
 @app.route("/")
 def home():
+    if not session.get("name"):
+        return  redirect("/login")
     return  render_template("index.html", sports=SPORTS)
+
+@app.route("/login", methods=["GET","POST"])
+def login():
+    if request.method == "POST":
+        session["name"]=request.form.get("name")
+        return  redirect("/")
+    return  render_template("login.html")
+
+@app.route("/logout")
+def logout():
+    session["name"]=None
+    return  redirect("/")
+
 
 @app.route("/register", methods=["POST"])
 def register():
@@ -25,13 +46,23 @@ def register():
     registration[name]=sport
     user=User(Name=name,Sport=sport)
     print(user.Name)
-    session.add(user)
-    session.commit()
+    db.add(user)
+    db.commit()
     return  render_template("greet.html")
 
 @app.route("/registrans")
 def registrans():
-    all_user=session.query(User).all()
+    all_user=db.query(User).all()
     return  render_template("registrans.html", registrans=all_user)
+
+@app.route("/deregistr", methods=["POST"] )
+def deregistr():
+    id=request.form.get("id")
+    if id:
+        user_to_delete = db.query(User).filter_by(id=id).first()
+        db.delete(user_to_delete)
+        db.commit()
+
+    return  redirect("/registrans")
 
 app.run(debug=True)

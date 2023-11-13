@@ -1,11 +1,30 @@
 {% extends "base.html" %}
 
 {% block body%} 
-<ul>
-    {% for registr in registrans %}
-        <li>{{registr.Name}} is registered for {{ registr.Sport }}</li>
-    {% endfor %}
-</ul>
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for registr in registrans %}
+            <tr>
+                <td>{{registr.Name}}</td>
+                <td>{{registr.Email}}</td>
+                <td> 
+                    <form action="/deregistr" method="post">
+                        <input name="id" type="hidden" value="{{registr.id}}">
+                        <input type="submit" value="Deregister">
+
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
 
 
 {% endblock %}
