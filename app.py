@@ -22,6 +22,29 @@ def home():
         return  redirect("/login")
     return  render_template("index.html", sports=SPORTS)
 
+@app.route("/books")
+def books():
+    books=None
+    return  render_template("books.html", books=books)
+
+@app.route("/cart", methods=["GET","POST"])
+def cart():
+    if "cart" not in session:
+        session["cart"] =[]
+    
+    if request.method == "POST":
+        id=request.form.get("id")
+        if id:
+            session["cart"].append(id)
+        return  redirect("/cart")
+    
+    books= None
+    return  render_template("cart.html", books=books)
+
+
+
+
+
 @app.route("/login", methods=["GET","POST"])
 def login():
     if request.method == "POST":
